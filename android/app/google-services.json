@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "912544190164",
+    "project_id": "smart-classroom-app-ab2a3",
+    "storage_bucket": "smart-classroom-app-ab2a3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912544190164:android:45e0a86dd37ccadb4cf541",
+        "android_client_info": {
+          "package_name": "com.pratik.smartclassroom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPKcTen-2lgFz3uzSFOsgbyeWRCzmLM-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912544190164:android:e9f6bc44288b8ac74cf541",
+        "android_client_info": {
+          "package_name": "com.smartclassroom.smart_classroom"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPKcTen-2lgFz3uzSFOsgbyeWRCzmLM-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
