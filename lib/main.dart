@@ -74,10 +74,81 @@ class MyApp extends StatelessWidget {
               color: Colors.white,
             ),
           ),
+          // Smoother default page transitions
+          pageTransitionsTheme: const PageTransitionsTheme(
+            builders: {
+              TargetPlatform.android: _FadeTransitionBuilder(),
+              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            },
+          ),
           useMaterial3: true,
         ),
-        home: const AuthWrapper(),
+        initialRoute: '/',
+        // ── onGenerateRoute with fade transitions ────────────────────
+        // Replaces the static `routes` map to enable custom transitions
+        // on every route change (especially splash → auth).
+        onGenerateRoute: (settings) {
+          final routes = <String, WidgetBuilder>{
+            '/': (_) => const SplashScreen(),
+            '/auth': (_) => const AuthWrapper(),
+            '/dashboard': (_) => const DashboardScreen(),
+            '/login': (_) => const LoginScreen(),
+          };
+
+          final builder = routes[settings.name];
+          if (builder == null) {
+            return null;
+          }
+
+          // Splash → auth gets a longer, smoother fade
+          if (settings.name == '/auth') {
+            return PageRouteBuilder<void>(
+              settings: settings,
+              transitionDuration: const Duration(milliseconds: 500),
+              reverseTransitionDuration: const Duration(milliseconds: 300),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return builder(context);
+              },
+              transitionsBuilder: (context, animation, _, child) {
+                return FadeTransition(
+                  opacity: CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeInOut,
+                  ),
+                  child: child,
+                );
+              },
+            );
+          }
+
+          // All other routes use the theme's page transition
+          return MaterialPageRoute<void>(
+            settings: settings,
+            builder: builder,
+          );
+        },
       ),
+    );
+  }
+}
+
+/// Custom fade transition for Android page navigation.
+/// Eliminates the default "slide up" which causes jank when
+/// combined with splash screen disposal and heavy init work.
+class _FadeTransitionBuilder extends PageTransitionsBuilder {
+  const _FadeTransitionBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return FadeTransition(
+      opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+      child: child,
     );
   }
 }
@@ -117,7 +188,14 @@ class _AuthWrapperState extends State<AuthWrapper> {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SplashScreen();
+          return const Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primary,
+              ),
+            ),
+          );
         }
 
         if (snapshot.hasData) {
