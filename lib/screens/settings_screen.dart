@@ -23,12 +23,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _isExporting = true);
 
     try {
-      final filePath = await BackupService.exportData();
+      await BackupService.exportData();
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Data exported successfully to:\n$filePath'),
+          content: const Text('Data exported successfully!'),
           backgroundColor: AppColors.paid,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -56,13 +56,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _confirmLogout() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Logout'),
         content: const Text('Are you sure you want to logout?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           TextButton(
@@ -72,14 +72,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               final feeSvc = context.read<FeeService>();
               final authSvc = context.read<AuthService>();
 
-              Navigator.pop(context);
+              Navigator.pop(dialogContext);
               await studentSvc.clear();
               await attendanceSvc.clear();
               await feeSvc.clear();
-              await Hive.close();
               await authSvc.signOut();
               
-              // No need to pushAndRemoveUntil LoginScreen because StreamBuilder in main.dart handles navigation automatically upon signOut!
+              if (!mounted) return;
+              Navigator.pushNamedAndRemoveUntil(context, '/auth', (route) => false);
             },
             child: const Text(
               'Logout',

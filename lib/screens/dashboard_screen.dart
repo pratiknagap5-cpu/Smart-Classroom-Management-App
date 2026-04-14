@@ -12,6 +12,10 @@ import 'attendance_report_screen.dart';
 import 'fee_list_screen.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
+import 'students_screen.dart';
+import 'present_students_screen.dart';
+import 'absent_students_screen.dart';
+import 'fees_screen.dart';
 
 /// Main dashboard with summary cards and navigation grid
 class DashboardScreen extends StatelessWidget {
@@ -90,24 +94,40 @@ class DashboardScreen extends StatelessWidget {
                           label: 'Total Students',
                           value: '${studentSvc.totalStudents}',
                           color: const Color(0xFF3B82F6), // Light blue
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const StudentsScreen()),
+                          ),
                         ),
                         SummaryCard(
                           icon: Icons.check_circle_outline_rounded,
                           label: 'Present Today',
                           value: '${attendanceSvc.getTotalPresentToday(today)}',
                           color: const Color(0xFF10B981), // Soft green
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const PresentStudentsScreen()),
+                          ),
                         ),
                         SummaryCard(
                           icon: Icons.cancel_outlined,
                           label: 'Absent Today',
                           value: '${attendanceSvc.getTotalAbsentToday(today)}',
                           color: const Color(0xFFEF4444), // Light red
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const AbsentStudentsScreen()),
+                          ),
                         ),
                         SummaryCard(
                           icon: Icons.currency_rupee_rounded,
                           label: 'Fees Pending',
                           value: Helpers.formatCurrency(feeSvc.getTotalPending()),
                           color: const Color(0xFFF59E0B), // Warm yellow
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const FeesScreen()),
+                          ),
                         ),
                       ],
                     );

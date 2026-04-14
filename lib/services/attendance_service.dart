@@ -130,6 +130,20 @@ class AttendanceService extends ChangeNotifier {
         .length;
   }
 
+  /// Get list of students marked present today
+  List<Attendance> getPresentTodayRecords(String today) {
+    return _box.values
+        .where((a) => a.date == today && a.status == 'Present')
+        .toList();
+  }
+
+  /// Get list of students marked absent today
+  List<Attendance> getAbsentTodayRecords(String today) {
+    return _box.values
+        .where((a) => a.date == today && a.status == 'Absent')
+        .toList();
+  }
+
   /// Get attendance stats for a student
   Map<String, int> getStudentAttendanceStats(String studentId) {
     final records = _box.values.where((a) => a.studentId == studentId).toList();

@@ -1,19 +1,19 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:share_plus/share_plus.dart';
 import '../models/student.dart';
 import '../models/attendance.dart';
 import '../models/fee.dart';
 import '../utils/constants.dart';
 import '../utils/helpers.dart';
+import '../utils/file_saver.dart'
+    if (dart.library.io) '../utils/file_saver_mobile.dart'
+    if (dart.library.html) '../utils/file_saver_web.dart';
 
 /// Service for exporting app data as JSON backup
 class BackupService {
   /// Export all data as a JSON file and share it
-  static Future<String> exportData() async {
+  static Future<void> exportData() async {
     try {
       final uid = FirebaseAuth.instance.currentUser!.uid;
       final studentsBox = Hive.box<Student>(HiveBoxes.students(uid));
@@ -34,23 +34,12 @@ class BackupService {
       };
 
       final jsonString = const JsonEncoder.withIndent('  ').convert(data);
-
-      // Save to app documents directory
-      final directory = await getApplicationDocumentsDirectory();
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'classroom_backup_$timestamp.json';
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsString(jsonString);
 
-      // Share the file
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        subject: 'Smart Classroom Backup',
-        text:
-            'Classroom data backup - ${Helpers.formatDateReadable(DateTime.now())}',
-      );
-
-      return file.path;
+      // Save using platform-specific implementation
+      final saver = getFileSaver();
+      await saver.saveAndShare(fileName, jsonString);
     } catch (e) {
       throw Exception('Failed to export data: $e');
     }

@@ -111,6 +111,11 @@ class FeeService extends ChangeNotifier {
     return _box.values.where((f) => f.status != 'Paid').length;
   }
 
+  /// Get list of students with pending fees
+  List<Fee> getPendingFeeRecords() {
+    return _box.values.where((f) => f.status != 'Paid').toList();
+  }
+
   /// Get all fee records (for backup)
   List<Fee> getAllFees() {
     return _box.values.toList();
